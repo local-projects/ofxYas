@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -174,7 +174,13 @@ struct predic_less {
 
 /***********************************************************************************/
 
-using optional_t = std::pair<bool, std::uint8_t>;
+template<typename K, typename V>
+struct pair {
+    K key;
+    V val;
+};
+
+using optional_t = pair<bool, std::uint8_t>;
 
 template<typename>
 struct ctmap;
@@ -187,7 +193,7 @@ struct ctmap<std::tuple<KVI...>> {
         std::size_t count = sizeof...(KVI);
 
         while ( count > 0 ) {
-            if ( (beg+count/2)->first < k ) {
+            if ( (beg+count/2)->key < k ) {
                 beg = beg+count/2+1;
                 count -= count/2+1;
             } else {
@@ -195,15 +201,15 @@ struct ctmap<std::tuple<KVI...>> {
             }
         }
 
-        return {(beg != end && beg->first == k), beg->second};
+        return {(beg != end && beg->key == k), beg->val};
     }
 
-    static constexpr std::pair<std::uint32_t, std::uint8_t> kvis[] = {
+    static constexpr pair<std::uint32_t, std::uint8_t> kvis[] = {
         {KVI::first_type::value, KVI::second_type::value}...
     };
 };
 template<typename... KVI>
-constexpr std::pair<std::uint32_t, std::uint8_t> ctmap<std::tuple<KVI...>>::kvis[];
+constexpr pair<std::uint32_t, std::uint8_t> ctmap<std::tuple<KVI...>>::kvis[];
 
 template<typename KVI>
 struct ctmap<std::tuple<KVI>> {
@@ -295,9 +301,6 @@ make_val(ConstCharPtr key, V &&val) {
 
 /***************************************************************************/
 
-template<typename, typename...>
-struct object;
-
 template<typename KVI, typename... Pairs>
 struct object {
     using tuple = std::tuple<Pairs...>;
@@ -339,26 +342,30 @@ make_object(std::nullptr_t, Pairs &&... pairs) {
 
 /**************************************************************************/
 
+#define __YAS_ARG16(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, ...) _15
+#define __YAS_HAS_COMMA(...) __YAS_ARG16(__VA_ARGS__, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+#define __YAS__TRIGGER_PARENTHESIS_(...) ,
+#define __YAS_PASTE5(_0, _1, _2, _3, _4) _0 ## _1 ## _2 ## _3 ## _4
+#define __YAS_IS_EMPTY_CASE_0001 ,
+#define __YAS_ISEMPTY(_0, _1, _2, _3) __YAS_HAS_COMMA(__YAS_PASTE5(__YAS_IS_EMPTY_CASE_, _0, _1, _2, _3))
+#define __YAS_TUPLE_IS_EMPTY_IMPL(...) \
+    __YAS_ISEMPTY( \
+        __YAS_HAS_COMMA(__VA_ARGS__), \
+        __YAS_HAS_COMMA(__YAS__TRIGGER_PARENTHESIS_ __VA_ARGS__),                 \
+        __YAS_HAS_COMMA(__VA_ARGS__ (/*empty*/)), \
+        __YAS_HAS_COMMA(__YAS__TRIGGER_PARENTHESIS_ __VA_ARGS__ (/*empty*/)) \
+    )
+
 #if defined(YAS_SERIALIZE_BOOST_TYPES)
 #   include <boost/version.hpp>
 #   if BOOST_VERSION >= 106000
 #       include <boost/vmd/is_empty.hpp>
 #       define __YAS_TUPLE_IS_EMPTY(...) BOOST_VMD_IS_EMPTY(__VA_ARGS__)
+#   else
+#       define __YAS_TUPLE_IS_EMPTY(...) __YAS_TUPLE_IS_EMPTY_IMPL(__VA_ARGS__)
 #   endif // BOOST_VERSION >= 106000
 #else // !defined(YAS_SERIALIZE_BOOST_TYPES)
-#   define __YAS_ARG16(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, ...) _15
-#   define __YAS_HAS_COMMA(...) __YAS_ARG16(__VA_ARGS__, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
-#   define __YAS__TRIGGER_PARENTHESIS_(...) ,
-#   define __YAS_PASTE5(_0, _1, _2, _3, _4) _0 ## _1 ## _2 ## _3 ## _4
-#   define __YAS_IS_EMPTY_CASE_0001 ,
-#   define __YAS_ISEMPTY(_0, _1, _2, _3) __YAS_HAS_COMMA(__YAS_PASTE5(__YAS_IS_EMPTY_CASE_, _0, _1, _2, _3))
-#   define __YAS_TUPLE_IS_EMPTY(...) \
-        __YAS_ISEMPTY( \
-            __YAS_HAS_COMMA(__VA_ARGS__), \
-            __YAS_HAS_COMMA(__YAS__TRIGGER_PARENTHESIS_ __VA_ARGS__),                 \
-            __YAS_HAS_COMMA(__VA_ARGS__ (/*empty*/)), \
-            __YAS_HAS_COMMA(__YAS__TRIGGER_PARENTHESIS_ __VA_ARGS__ (/*empty*/)) \
-        )
+#   define __YAS_TUPLE_IS_EMPTY(...) __YAS_TUPLE_IS_EMPTY_IMPL(__VA_ARGS__)
 #endif // defined(YAS_SERIALIZE_BOOST_TYPES)
 
 /**************************************************************************/

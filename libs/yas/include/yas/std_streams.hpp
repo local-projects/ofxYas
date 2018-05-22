@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -55,7 +55,7 @@ struct std_ostream {
     {}
 
     std::size_t write(const void *ptr, const std::size_t size) {
-        os.write(YAS_SCAST(const char*, ptr), size);
+        os.write(__YAS_SCAST(const char*, ptr), size);
 
         return size;
     }
@@ -79,12 +79,12 @@ struct std_istream {
     {}
 
     std::size_t read(void *ptr, const std::size_t size) {
-        return YAS_SCAST(std::size_t, is.read(YAS_SCAST(char*, ptr), size).gcount());
+        return __YAS_SCAST(std::size_t, is.read(__YAS_SCAST(char*, ptr), size).gcount());
     }
 
     bool empty() const { return is.peek() == EOF; }
-    char peekch() const { return YAS_SCAST(char, is.peek()); }
-    char getch() { return YAS_SCAST(char, is.get()); }
+    char peekch() const { return __YAS_SCAST(char, is.peek()); }
+    char getch() { return __YAS_SCAST(char, is.get()); }
     void ungetch(char ch) { is.putback(ch); }
 
 private:

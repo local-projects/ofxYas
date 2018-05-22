@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -44,7 +44,7 @@ namespace yas {
 
 /***************************************************************************/
 
-#define YAS_DECLARE_EXCEPTION_TYPE(type) \
+#define __YAS_DECLARE_EXCEPTION_TYPE(type) \
 	struct type: std::exception { \
 		type(const char *msg) noexcept \
 			:msg(msg) \
@@ -57,11 +57,11 @@ namespace yas {
 		const char *msg; \
 	};
 
-#define YAS_EXCEPTION_MAKE_MSG(msg) \
+#define __YAS_EXCEPTION_MAKE_MSG(msg) \
 	__FILE__ "(" YAS_PP_STRINGIZE(__LINE__) "): " msg
 
-#define YAS_THROW_EXCEPTION(type, msg) \
-	throw type(YAS_EXCEPTION_MAKE_MSG(msg))
+#define __YAS_THROW_EXCEPTION(type, msg) \
+	throw type(__YAS_EXCEPTION_MAKE_MSG(msg))
 
 /***************************************************************************/
 

@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -84,7 +84,7 @@ Archive& load(Archive &ar, C &c) {
             json_skipws(ar);
         }
 
-        YAS_THROW_IF_BAD_JSON_CHARS(ar, "[");
+        __YAS_THROW_IF_BAD_JSON_CHARS(ar, "[");
 
         __YAS_CONSTEXPR_IF ( !(F & yas::compacted) ) {
             json_skipws(ar);
@@ -123,7 +123,7 @@ Archive& load(Archive &ar, C &c) {
         }
 
         json_skipws(ar);
-        YAS_THROW_IF_BAD_JSON_CHARS(ar, "]");
+        __YAS_THROW_IF_BAD_JSON_CHARS(ar, "]");
     } else {
         const auto size = ar.read_seq_size();
         if ( size ) {

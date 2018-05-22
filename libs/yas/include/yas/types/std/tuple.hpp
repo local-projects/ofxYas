@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -38,7 +38,7 @@
 
 #include <yas/detail/type_traits/type_traits.hpp>
 #include <yas/detail/type_traits/serializer.hpp>
-#include <yas/detail/io/serialization_exception.hpp>
+#include <yas/detail/io/serialization_exceptions.hpp>
 #include <yas/detail/tools/cast.hpp>
 #include <yas/detail/tools/tuple_element_name.hpp>
 
@@ -59,7 +59,7 @@ struct serializer<
 	template<typename Archive>
 	static Archive& save(Archive &ar, const std::tuple<Types...> &tuple) {
         __YAS_CONSTEXPR_IF ( F & options::binary ) {
-			ar.write(YAS_SCAST(std::uint8_t, sizeof...(Types)));
+			ar.write(__YAS_SCAST(std::uint8_t, sizeof...(Types)));
 		} else if ( F & yas::text ) {
 			ar.write(sizeof...(Types));
 		}
@@ -77,26 +77,26 @@ struct serializer<
 		__YAS_CONSTEXPR_IF ( F & options::binary ) {
 			std::uint8_t size = 0;
 			ar.read(size);
-			if ( size != sizeof...(Types) ) { YAS_THROW_BAD_SIZE_ON_DESERIALIZE("std::tuple"); }
+			if ( size != sizeof...(Types) ) { __YAS_THROW_BAD_SIZE_ON_DESERIALIZE("std::tuple"); }
 		} else if ( F & yas::text ) {
 			std::uint32_t size = 0;
 			ar.read(size);
-			if ( size != sizeof...(Types) ) { YAS_THROW_BAD_SIZE_ON_DESERIALIZE("std::tuple"); }
+			if ( size != sizeof...(Types) ) { __YAS_THROW_BAD_SIZE_ON_DESERIALIZE("std::tuple"); }
 		}
 
         __YAS_CONSTEXPR_IF ( F & yas::json ) {
             __YAS_CONSTEXPR_IF ( 0 == sizeof...(Types) ) {
-                YAS_THROW_IF_BAD_JSON_CHARS(ar, "[]");
+                __YAS_THROW_IF_BAD_JSON_CHARS(ar, "[]");
 
                 return ar;
             }
 
-			YAS_THROW_IF_BAD_JSON_CHARS(ar, "[");
+			__YAS_THROW_IF_BAD_JSON_CHARS(ar, "[");
         }
 
 		apply(ar, tuple);
 
-        __YAS_CONSTEXPR_IF ( F & yas::json ) { YAS_THROW_IF_BAD_JSON_CHARS(ar, "]"); }
+        __YAS_CONSTEXPR_IF ( F & yas::json ) { __YAS_THROW_IF_BAD_JSON_CHARS(ar, "]"); }
 
         return ar;
     }
@@ -130,7 +130,7 @@ private:
         ar & YAS_OBJECT_NVP(nullptr, (tuple_element_name_t::c_str(), std::get<I>(t)));
 
         __YAS_CONSTEXPR_IF ( (F & yas::json) && I+1 < sizeof...(Tp) ) {
-            YAS_THROW_IF_BAD_JSON_CHARS(ar, ",");
+            __YAS_THROW_IF_BAD_JSON_CHARS(ar, ",");
         }
 
         return apply<I+1>(ar, t);

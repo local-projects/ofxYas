@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -38,6 +38,7 @@
 
 #include <yas/detail/type_traits/type_traits.hpp>
 #include <yas/detail/type_traits/serializer.hpp>
+#include <yas/detail/tools/cast.hpp>
 
 #include <chrono>
 
@@ -55,17 +56,17 @@ struct serializer<
 > {
 	template<typename Archive>
 	static Archive& save(Archive& ar, const std::chrono::duration<R, P> &d) {
-		ar.write(d.count());
+		ar.write(__YAS_SCAST(std::int64_t, d.count()));
 
 		return ar;
 	}
 
 	template<typename Archive>
 	static Archive& load(Archive& ar, std::chrono::duration<R, P> &d) {
-		R count{};
+		std::int64_t count{};
 		ar.read(count);
 
-        d = std::chrono::duration<R, P>(count);
+        d = std::chrono::duration<R, P>(__YAS_SCAST(R, count));
 
 		return ar;
 	}

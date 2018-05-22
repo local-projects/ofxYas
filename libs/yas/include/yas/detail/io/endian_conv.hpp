@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -50,7 +50,7 @@ struct storage_type {
 		 is_float  = std::is_same<T, float>::value
 		,is_double = std::is_same<T, double>::value
 	};
-	static_assert(is_float||is_double,"only double or float types is allowed");
+	static_assert(is_float||is_double, "only double or float types is allowed");
 
 	using type = typename std::conditional<
 		 is_float
@@ -95,18 +95,18 @@ struct endian_converter<false> {
 template<>
 struct endian_converter<true> {
 	template<typename T>
-	static T bswap(const T &v, YAS_ENABLE_IF_IS_ANY_OF(T, std::int16_t, std::uint16_t))
-	{ return YAS_NETWORK_TO_LOCAL16(v); }
+	static T bswap(const T &v, __YAS_ENABLE_IF_IS_ANY_OF(T, std::int16_t, std::uint16_t))
+	{ return __YAS_NETWORK_TO_LOCAL16(v); }
 	template<typename T>
-	static T bswap(const T &v, YAS_ENABLE_IF_IS_ANY_OF(T, std::int32_t, std::uint32_t))
-	{ return YAS_NETWORK_TO_LOCAL32(v); }
+	static T bswap(const T &v, __YAS_ENABLE_IF_IS_ANY_OF(T, std::int32_t, std::uint32_t))
+	{ return __YAS_NETWORK_TO_LOCAL32(v); }
 	template<typename T>
-	static T bswap(const T &v, YAS_ENABLE_IF_IS_ANY_OF(T, std::int64_t, std::uint64_t))
-	{ return YAS_NETWORK_TO_LOCAL64(v); }
+	static T bswap(const T &v, __YAS_ENABLE_IF_IS_ANY_OF(T, std::int64_t, std::uint64_t))
+	{ return __YAS_NETWORK_TO_LOCAL64(v); }
 
 	template<typename T>
 	static typename storage_type<T>::type
-	to_network(const T &v, YAS_ENABLE_IF_IS_ANY_OF(T, float, double)) {
+	to_network(const T &v, __YAS_ENABLE_IF_IS_ANY_OF(T, float, double)) {
 		union {
 			typename storage_type<T>::type u;
 			T v;
@@ -118,7 +118,7 @@ struct endian_converter<true> {
 
 	template<typename T>
 	static T
-	from_network(const typename storage_type<T>::type &v, YAS_ENABLE_IF_IS_ANY_OF(T, float, double)) {
+	from_network(const typename storage_type<T>::type &v, __YAS_ENABLE_IF_IS_ANY_OF(T, float, double)) {
 		union {
 			typename storage_type<T>::type u;
 			T v;

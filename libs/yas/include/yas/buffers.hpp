@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -76,9 +76,9 @@ struct shared_buffer {
         :size(0)
     { assign(ptr, size); }
 
-    shared_buffer(const shared_array_type& buf, std::size_t size)
+    shared_buffer(shared_array_type buf, std::size_t size)
         :size(size)
-    { if ( size ) { data = buf; } }
+    { if ( size ) { data = std::move(buf); } }
 
     shared_buffer(const shared_buffer& buf)
         :size(buf.size)

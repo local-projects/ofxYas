@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -40,11 +40,10 @@
 #include <yas/detail/type_traits/serializer.hpp>
 #include <yas/detail/io/header.hpp>
 #include <yas/detail/io/text_streams.hpp>
+#include <yas/detail/tools/base_object.hpp>
 #include <yas/detail/tools/noncopyable.hpp>
 #include <yas/detail/tools/limit.hpp>
 #include <yas/defaul_traits.hpp>
-
-#include <yas/tools/base_object.hpp>
 
 #include <yas/types/utility/fundamental.hpp>
 #include <yas/types/utility/enum.hpp>

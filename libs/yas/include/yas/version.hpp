@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -36,18 +36,18 @@
 #ifndef __yas__version_hpp
 #define __yas__version_hpp
 
-// YAS_VERSION % 100 is the patch level
-// YAS_VERSION / 100 % 1000 is the minor version
 // YAS_VERSION / 100000 is the major version
+// YAS_VERSION / 100 % 1000 is the minor version
+// YAS_VERSION % 100 is the bugfix level
 
 #define YAS_VERSION_MAJOR 6
 #define YAS_VERSION_MINOR 0
-#define YAS_VERSION_RELEASE 2
+#define YAS_VERSION_BUGFIX 3
 
 #define YAS_VERSION \
      YAS_VERSION_MAJOR*100000 \
     +YAS_VERSION_MINOR*1000 \
-    +YAS_VERSION_RELEASE*10
+    +YAS_VERSION_BUGFIX*10
 
 #define __YAS_STRINGIZE_I(x) #x
 #define __YAS_STRINGIZE(x) __YAS_STRINGIZE_I(x)
@@ -55,7 +55,7 @@
 #define YAS_VERSION_STRING \
         __YAS_STRINGIZE(YAS_VERSION_MAJOR) \
     "." __YAS_STRINGIZE(YAS_VERSION_MINOR) \
-    "." __YAS_STRINGIZE(YAS_VERSION_RELEASE)
+    "." __YAS_STRINGIZE(YAS_VERSION_BUGFIX)
 
 namespace yas {
 namespace detail {

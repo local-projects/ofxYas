@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -36,7 +36,7 @@
 #ifndef __yas__detail__tools__json_tools_hpp
 #define __yas__detail__tools__json_tools_hpp
 
-#include <yas/detail/io/serialization_exception.hpp>
+#include <yas/detail/io/serialization_exceptions.hpp>
 
 #include <cstdint>
 
@@ -151,7 +151,7 @@ void json_skip_string(Archive &ar) {
                     case 'r' :
                     case 't' : return;
                     case 'u' : return json_skip_unicode(ar);
-                    default: YAS_THROW_INVALID_JSON_STRING("invalid string: forbidden char")
+                    default: __YAS_THROW_INVALID_JSON_STRING("invalid string: forbidden char")
                 }
             }
             default: continue;
@@ -179,12 +179,12 @@ template<typename Archive>
 void json_skip_object(Archive &ar) {
     while ( true ) {
         json_skipws(ar);
-        YAS_THROW_IF_BAD_JSON_CHARS(ar, "\"")
+        __YAS_THROW_IF_BAD_JSON_CHARS(ar, "\"")
 
         json_skip_string(ar); // key
 
         json_skipws(ar);
-        YAS_THROW_IF_BAD_JSON_CHARS(ar, ":")
+        __YAS_THROW_IF_BAD_JSON_CHARS(ar, ":")
 
         json_skipws(ar);
         json_skip_val(ar); // val

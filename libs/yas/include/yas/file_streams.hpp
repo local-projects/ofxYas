@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -47,7 +47,7 @@ namespace yas {
 
 /***************************************************************************/
 
-enum file_mode {
+enum file_mode: std::uint32_t {
      file_trunc  = 1u<<0
     ,file_append = 1u<<1
     ,file_nobuf  = 1u<<2
@@ -64,16 +64,16 @@ struct file_ostream {
 	{
 		const bool exists = file_exists(fname);
 		if ( exists && !m ) {
-            YAS_THROW_FILE_ALREADY_EXISTS();
+            __YAS_THROW_FILE_ALREADY_EXISTS();
         }
 		if ( !exists && (m & file_append) ) {
-            YAS_THROW_FILE_IS_NOT_EXISTS();
+			__YAS_THROW_FILE_IS_NOT_EXISTS();
         }
 
         const char *fmode = file_mode_str(m);
 		file = std::fopen(fname, fmode);
 		if ( !file ) {
-            YAS_THROW_ERROR_OPEN_FILE();
+            __YAS_THROW_ERROR_OPEN_FILE();
         }
 
         if ( m & file_nobuf ) {
@@ -99,7 +99,7 @@ private:
             return "ab";
         }
 
-        YAS_THROW_BAD_FILE_MODE();
+        __YAS_THROW_BAD_FILE_MODE();
     }
 	static bool file_exists(const char *fname) {
 		FILE* file = std::fopen(fname, "r");
@@ -123,7 +123,7 @@ struct file_istream {
 		:file(std::fopen(fname, "rb"))
 	{
 		if ( !file ) {
-            YAS_THROW_ERROR_OPEN_FILE();
+            __YAS_THROW_ERROR_OPEN_FILE();
         }
 
         if ( m & file_nobuf ) {
@@ -144,9 +144,9 @@ struct file_istream {
         int ch = std::getc(file);
         std::ungetc(ch, file);
 
-        return YAS_SCAST(char, ch);
+        return __YAS_SCAST(char, ch);
     }
-    char getch() { return YAS_SCAST(char, std::getc(file)); }
+    char getch() { return __YAS_SCAST(char, std::getc(file)); }
 	void ungetch(char ch) { std::ungetc(ch, file); }
 
 private:

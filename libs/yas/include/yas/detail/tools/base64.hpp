@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -38,7 +38,8 @@
 
 #include <yas/detail/config/endian.hpp>
 #include <yas/detail/tools/cast.hpp>
-#include <yas/detail/io/serialization_exception.hpp>
+#include <yas/detail/io/io_exceptions.hpp>
+#include <yas/detail/io/serialization_exceptions.hpp>
 
 #include <cstdint>
 
@@ -146,12 +147,12 @@ std::size_t modp_b64_encode(IO &io, const char *str, std::size_t len) {
     };
 
     std::size_t i = 0, p = 0;
-    char buf[4];
+    std::uint8_t buf[4];
     if (len > 2) {
         for ( ; i < len - 2; i += 3) {
-            const std::uint8_t t1 = YAS_SCAST(std::uint8_t, str[i]);
-            const std::uint8_t t2 = YAS_SCAST(std::uint8_t, str[i+1]);
-            const std::uint8_t t3 = YAS_SCAST(std::uint8_t, str[i+2]);
+            const std::uint8_t t1 = __YAS_SCAST(std::uint8_t, str[i]);
+            const std::uint8_t t2 = __YAS_SCAST(std::uint8_t, str[i+1]);
+            const std::uint8_t t3 = __YAS_SCAST(std::uint8_t, str[i+2]);
             buf[0] = e0[t1];
             buf[1] = e1[((t1 & 0x03) << 4) | ((t2 >> 4) & 0x0F)];
             buf[2] = e1[((t2 & 0x0F) << 2) | ((t3 >> 6) & 0x03)];
@@ -166,7 +167,7 @@ std::size_t modp_b64_encode(IO &io, const char *str, std::size_t len) {
         case 0:
             break;
         case 1: {
-            const std::uint8_t t1 = YAS_SCAST(std::uint8_t, str[i]);
+            const std::uint8_t t1 = __YAS_SCAST(std::uint8_t, str[i]);
             buf[0] = e0[t1];
             buf[1] = e1[(t1 & 0x03) << 4];
             buf[2] = '=';
@@ -177,8 +178,8 @@ std::size_t modp_b64_encode(IO &io, const char *str, std::size_t len) {
             break;
         }
         default: { /* case 2 */
-            const std::uint8_t t1 = YAS_SCAST(std::uint8_t, str[i]);
-            const std::uint8_t t2 = YAS_SCAST(std::uint8_t, str[i + 1]);
+            const std::uint8_t t1 = __YAS_SCAST(std::uint8_t, str[i]);
+            const std::uint8_t t2 = __YAS_SCAST(std::uint8_t, str[i + 1]);
             buf[0] = e0[t1];
             buf[1] = e1[((t1 & 0x03) << 4) | ((t2 >> 4) & 0x0F)];
             buf[2] = e2[(t2 & 0x0F) << 2];
@@ -197,17 +198,16 @@ std::size_t modp_b64_decode(char *dest, IO &io, std::size_t len) {
     if ( len == 0 ) return 0;
 
     // the message must be at least 4 chars and be a multiple of 4
-    if (len < 4 || (len % 4) != 0)
-        YAS_THROW_BASE64_ERROR("MODP_B64_ERROR");
+    if (len < 4 || (len % 4) != 0) { __YAS_THROW_BASE64_ERROR("MODP_B64_ERROR"); }
 
     std::uint8_t buf[4];
     std::size_t leftover = len % 4;
     std::size_t chunks = ((leftover == 0) ? len/4-1 : len/4);
 
-    std::uint8_t* p = YAS_RCAST(std::uint8_t*, dest);
+    std::uint8_t* p = __YAS_RCAST(std::uint8_t*, dest);
     std::uint32_t x = 0;
 
-#if YAS_BIG_ENDIAN
+#if __YAS_BIG_ENDIAN
     /* SPECIAL DECODE TABLES FOR BIG ENDIAN (IBM/MOTOROLA/SUN) CPUS */
     static const std::uint32_t d0[256] = {
         0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
@@ -571,11 +571,11 @@ std::size_t modp_b64_decode(char *dest, IO &io, std::size_t len) {
         0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff,
         0x01ffffff, 0x01ffffff, 0x01ffffff, 0x01ffffff
     };
-#endif // YAS_BIG_ENDIAN()
+#endif // __YAS_BIG_ENDIAN()
 
-#if YAS_BIG_ENDIAN
-    std::uint32_t* destInt = YAS_RCAST(std::uint32_t*, p);
-    std::uint32_t* srcInt = YAS_RCAST(std::uint32_t*, src);
+#if __YAS_BIG_ENDIAN
+    std::uint32_t* destInt = __YAS_RCAST(std::uint32_t*, p);
+    std::uint32_t* srcInt = __YAS_RCAST(std::uint32_t*, src);
     std::uint32_t y = *srcInt++;
     for (i = 0; i < chunks; ++i) {
         x = d0[y >> 24 & 0xff] | d1[y >> 16 & 0xff] | d2[y >> 8 & 0xff] | d3[y & 0xff];
@@ -585,7 +585,7 @@ std::size_t modp_b64_decode(char *dest, IO &io, std::size_t len) {
 
         *destInt = x << 8;
         p += 3;
-        destInt = YAS_RCAST(std::uint32_t*, p);
+        destInt = __YAS_RCAST(std::uint32_t*, p);
         y = *srcInt++;
     }
 
@@ -594,43 +594,42 @@ std::size_t modp_b64_decode(char *dest, IO &io, std::size_t len) {
             x = d0[y >> 24 & 0xff] | d1[y >> 16 & 0xff] | d2[y >>  8 & 0xff] | d3[y & 0xff];
             if (x >= MODP_B64_BADCHAR)
                 YAS_THROW_BASE64_ERROR("MODP_B64_ERROR");
-            *p++ = YAS_RCAST(std::uint8_t*, &x)[1];
-            *p++ = YAS_RCAST(std::uint8_t*, &x)[2];
-            *p   = YAS_RCAST(std::uint8_t*, &x)[3];
+            *p++ = __YAS_RCAST(std::uint8_t*, &x)[1];
+            *p++ = __YAS_RCAST(std::uint8_t*, &x)[2];
+            *p   = __YAS_RCAST(std::uint8_t*, &x)[3];
             return (chunks+1)*3;
         }
     case 1: {
             x = d3[y >> 24];
-            *p =  YAS_SCAST(std::uint8_t, x);
+            *p =  __YAS_SCAST(std::uint8_t, x);
             break;
         }
     case 2: {
             x = d3[y >> 24] *64 + d3[(y >> 16) & 0xff];
-            *p =  YAS_SCAST(std::uint8_t, x >> 4);
+            *p =  __YAS_SCAST(std::uint8_t, x >> 4);
             break;
         }
     default:  {/* case 3 */
             x = (d3[y >> 24] *64 + d3[(y >> 16) & 0xff])*64 + d3[(y >> 8) & 0xff];
-            *p++ = YAS_SCAST(std::uint8_t, x >> 10);
-            *p   = YAS_SCAST(std::uint8_t, x >> 2);
+            *p++ = __YAS_SCAST(std::uint8_t, x >> 10);
+            *p   = __YAS_SCAST(std::uint8_t, x >> 2);
             break;
         }
     }
 #else
     for ( std::size_t i = 0; i < chunks; ++i ) {
-        io.read(buf, sizeof(buf));
+         __YAS_THROW_READ_ERROR(sizeof(buf) != io.read(buf, sizeof(buf)));
         x = d0[buf[0]] | d1[buf[1]] | d2[buf[2]] | d3[buf[3]];
 
-        if (x >= MODP_B64_BADCHAR)
-            YAS_THROW_BASE64_ERROR("MODP_B64_ERROR");
+        if ( x >= MODP_B64_BADCHAR ) { __YAS_THROW_BASE64_ERROR("MODP_B64_ERROR"); }
 
-        const std::uint8_t *xp = YAS_RCAST(std::uint8_t*, &x);
+        const std::uint8_t *xp = __YAS_RCAST(std::uint8_t*, &x);
         *p++ = xp[0];
         *p++ = xp[1];
         *p++ = xp[2];
     }
 
-    io.read(buf, sizeof(buf));
+    __YAS_THROW_READ_ERROR(sizeof(buf) != io.read(buf, sizeof(buf)));
     if ( buf[3] == '=' ) {
         --len;
         if ( buf[2] == '=' ) {
@@ -643,10 +642,9 @@ std::size_t modp_b64_decode(char *dest, IO &io, std::size_t len) {
         case 0: {
             x = d0[buf[0]] | d1[buf[1]] | d2[buf[2]] | d3[buf[3]];
 
-            if ( x >= MODP_B64_BADCHAR )
-                YAS_THROW_BASE64_ERROR("MODP_B64_ERROR");
+            if ( x >= MODP_B64_BADCHAR ) { __YAS_THROW_BASE64_ERROR("MODP_B64_ERROR"); }
 
-            const std::uint8_t *xp = YAS_RCAST(std::uint8_t*, &x);
+            const std::uint8_t *xp = __YAS_RCAST(std::uint8_t*, &x);
             *p++ = xp[0];
             *p++ = xp[1];
             *p   = xp[2];
@@ -655,25 +653,24 @@ std::size_t modp_b64_decode(char *dest, IO &io, std::size_t len) {
         }
         case 1: {/* with padding this is an impossible case */
             x = d0[buf[0]];
-            *p = YAS_RCAST(std::uint8_t*, &x)[0]; // i.e. first char/byte in int
+            *p = __YAS_RCAST(std::uint8_t*, &x)[0]; // i.e. first char/byte in int
             break;
         }
         case 2: {/* case 2, 1  output byte */
             x = d0[buf[0]] | d1[buf[1]];
-            *p = YAS_RCAST(std::uint8_t*, &x)[0]; // i.e. first char
+            *p = __YAS_RCAST(std::uint8_t*, &x)[0]; // i.e. first char
             break;
         }
         default: {/* case 3, 2 output bytes */
             x = d0[buf[0]] | d1[buf[1]] | d2[buf[2]];  /* 0x3c */
-            *p++ = YAS_RCAST(std::uint8_t*, &x)[0];
-            *p   = YAS_RCAST(std::uint8_t*, &x)[1];
+            *p++ = __YAS_RCAST(std::uint8_t*, &x)[0];
+            *p   = __YAS_RCAST(std::uint8_t*, &x)[1];
             break;
         }
     }
-#endif // YAS_BIG_ENDIAN
+#endif // __YAS_BIG_ENDIAN
 
-    if ( x >= MODP_B64_BADCHAR )
-        YAS_THROW_BASE64_ERROR("MODP_B64_ERROR");
+    if ( x >= MODP_B64_BADCHAR ) { __YAS_THROW_BASE64_ERROR("MODP_B64_ERROR"); }
 
     return 3*chunks+(6*leftover)/8;
 }

@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -79,18 +79,18 @@ struct serializer<
             const char ch = ar.getch();
             if ( ch == '\"' ) {
                 load_string(str, ar);
-                YAS_THROW_IF_BAD_JSON_CHARS(ar, "\"");
+                __YAS_THROW_IF_BAD_JSON_CHARS(ar, "\"");
             } else if ( ch == 'n' ) {
                 ar.ungetch(ch);
-                YAS_THROW_IF_BAD_JSON_CHARS(ar, "null");
+                __YAS_THROW_IF_BAD_JSON_CHARS(ar, "null");
                 str.clear();
             } else {
-                YAS_THROW_IF_BAD_JSON_CHARS(ar, "unreachable");
+                __YAS_THROW_IF_BAD_JSON_CHARS(ar, "unreachable");
             }
         } else {
             const auto size = ar.read_seq_size();
             str.resize(size);
-            ar.read(YAS_CCAST(char*, str.data()), size);
+            ar.read(__YAS_CCAST(char*, str.data()), size);
         }
 
         return ar;

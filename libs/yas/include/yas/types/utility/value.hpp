@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -38,7 +38,7 @@
 
 #include <yas/detail/type_traits/type_traits.hpp>
 #include <yas/detail/type_traits/serializer.hpp>
-#include <yas/detail/io/serialization_exception.hpp>
+#include <yas/detail/io/serialization_exceptions.hpp>
 #include <yas/detail/tools/json_tools.hpp>
 
 #include <yas/object.hpp>
@@ -70,13 +70,13 @@ struct serializer<
 	static Archive& load(Archive& ar, value<KT, VT> &v) {
 		__YAS_CONSTEXPR_IF ( F & yas::json ) {
 			__YAS_CONSTEXPR_IF ( F & yas::compacted ) {
-                YAS_THROW_IF_BAD_JSON_CHARS(ar, "\"");
+                __YAS_THROW_IF_BAD_JSON_CHARS(ar, "\"");
                 char key[1024];
                 const auto klen = json_read_key(ar, key, sizeof(key));
                 if ( klen != v.klen || 0 != std::memcmp(key, v.key, v.klen) ) {
-                    YAS_THROW_UNEXPECTED_JSON_KEY("unexpected json key");
+                    __YAS_THROW_UNEXPECTED_JSON_KEY("unexpected json key");
                 }
-                YAS_THROW_IF_BAD_JSON_CHARS(ar, "\":");
+                __YAS_THROW_IF_BAD_JSON_CHARS(ar, "\":");
             } else {
                 json_skipws(ar);
             }

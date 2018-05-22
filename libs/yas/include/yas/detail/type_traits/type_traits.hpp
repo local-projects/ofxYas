@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -95,10 +95,10 @@ struct disable_if_is_any_of
 	:std::enable_if<!is_any_of<T, Types...>::value>
 {};
 
-#define YAS_ENABLE_IF_IS_ANY_OF(T, ...) \
+#define __YAS_ENABLE_IF_IS_ANY_OF(T, ...) \
 	typename ::yas::detail::enable_if_is_any_of<T, __VA_ARGS__>::type* = 0
 
-#define YAS_DISABLE_IF_IS_ANY_OF(T, ...) \
+#define __YAS_DISABLE_IF_IS_ANY_OF(T, ...) \
 	typename ::yas::detail::disable_if_is_any_of<T, __VA_ARGS__>::type* = 0
 
 /***************************************************************************/

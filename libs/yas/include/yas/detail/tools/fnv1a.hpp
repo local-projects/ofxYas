@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -36,6 +36,8 @@
 #ifndef __yas__detail__type_traits__fnv1a_hpp
 #define __yas__detail__type_traits__fnv1a_hpp
 
+#include <yas/detail/tools/cast.hpp>
+
 #include <cstdint>
 
 namespace yas {
@@ -51,7 +53,10 @@ template<typename CharT>
 constexpr std::uint32_t fnv1a(const CharT *s) {
     std::uint32_t seed = 0x811c9dc5;
     for ( ; *s; ++s ) {
-        seed = ((seed ^ (*s)) * 0x01000193);
+        seed = __YAS_SCAST(
+             std::uint32_t
+            ,((seed ^ __YAS_SCAST(std::uint32_t, *s)) * __YAS_SCAST(std::uint64_t, 0x01000193))
+        );
     }
 
     return seed;
@@ -61,10 +66,16 @@ constexpr std::uint32_t fnv1a(const CharT *s) {
 
 template<typename CharT>
 constexpr std::uint32_t fnv1a(const CharT *s, std::uint32_t h = 0x811c9dc5) {
-    return (*s == 0) ? h : fnv1a(s+1, ((h ^ (*s)) * 0x01000193));
+    return (*s == 0)
+        ? h
+        : fnv1a(
+             s+1
+            ,__YAS_SCAST(std::uint32_t, ((h ^ __YAS_SCAST(std::uint32_t, *s)) * __YAS_SCAST(std::uint64_t, 0x01000193)))
+        )
+    ;
 }
 
-#endif
+#endif // __cplusplus >= 201402L
 
 /***************************************************************************/
 

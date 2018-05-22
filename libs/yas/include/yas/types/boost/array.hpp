@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -40,7 +40,7 @@
 
 #include <yas/detail/type_traits/type_traits.hpp>
 #include <yas/detail/type_traits/serializer.hpp>
-#include <yas/detail/io/serialization_exception.hpp>
+#include <yas/detail/io/serialization_exceptions.hpp>
 
 #include <boost/array.hpp>
 
@@ -86,19 +86,19 @@ struct serializer<
     template<typename Archive>
     static Archive& load(Archive& ar, boost::array<T, N>& array) {
         if ( F & yas::json ) {
-            YAS_THROW_IF_BAD_JSON_CHARS(ar, "[");
+            __YAS_THROW_IF_BAD_JSON_CHARS(ar, "[");
 
             auto it = array.begin();
             ar & (*it);
             for ( ++it; it != array.end(); ++it ) {
-                YAS_THROW_IF_BAD_JSON_CHARS(ar, ",");
+                __YAS_THROW_IF_BAD_JSON_CHARS(ar, ",");
                 ar & (*it);
             }
 
-            YAS_THROW_IF_BAD_JSON_CHARS(ar, "]");
+            __YAS_THROW_IF_BAD_JSON_CHARS(ar, "]");
         } else {
             const auto size = ar.read_seq_size();
-            if ( size != N ) YAS_THROW_BAD_ARRAY_SIZE();
+            if ( size != N ) { __YAS_THROW_BAD_ARRAY_SIZE(); }
             if ( can_be_processed_as_byte_array<F, T>::value ) {
                 ar.read(array.data(), N * sizeof(T));
             } else {

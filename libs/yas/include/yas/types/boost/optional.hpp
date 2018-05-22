@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -39,7 +39,7 @@
 #if defined(YAS_SERIALIZE_BOOST_TYPES)
 #include <yas/detail/type_traits/type_traits.hpp>
 #include <yas/detail/type_traits/serializer.hpp>
-#include <yas/detail/io/serialization_exception.hpp>
+#include <yas/detail/io/serialization_exceptions.hpp>
 
 #include <yas/object.hpp>
 
@@ -60,7 +60,7 @@ struct serializer<
 > {
 	template<typename Archive>
 	static Archive& save(Archive& ar, const boost::optional<T> &t) {
-		const bool inited = YAS_SCAST(bool, t);
+		const bool inited = __YAS_SCAST(bool, t);
         __YAS_CONSTEXPR_IF ( F & yas::json ) {
             if ( inited ) {
                 ar.write("[", 1);
@@ -88,18 +88,18 @@ struct serializer<
             __YAS_CONSTEXPR_IF ( !(F & yas::compacted) ) {
                 json_skipws(ar);
             }
-            YAS_THROW_IF_BAD_JSON_CHARS(ar, "[");
+            __YAS_THROW_IF_BAD_JSON_CHARS(ar, "[");
             bool inited = false;
             ar & YAS_OBJECT(nullptr, inited);
             if ( !inited ) {
-                YAS_THROW_IF_BAD_JSON_CHARS(ar, "]");
+                __YAS_THROW_IF_BAD_JSON_CHARS(ar, "]");
 
                 return ar;
             }
             __YAS_CONSTEXPR_IF ( !(F & yas::compacted) ) {
                 json_skipws(ar);
             }
-            YAS_THROW_IF_BAD_JSON_CHARS(ar, ",");
+            __YAS_THROW_IF_BAD_JSON_CHARS(ar, ",");
 
             T val = T();
             ar & YAS_OBJECT(nullptr, val);
@@ -108,7 +108,7 @@ struct serializer<
             __YAS_CONSTEXPR_IF ( !(F & yas::compacted) ) {
                 json_skipws(ar);
             }
-            YAS_THROW_IF_BAD_JSON_CHARS(ar, "]");
+            __YAS_THROW_IF_BAD_JSON_CHARS(ar, "]");
         } else {
             bool inited = false;
             ar.read(inited);

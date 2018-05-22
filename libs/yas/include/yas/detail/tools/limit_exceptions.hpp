@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -42,11 +42,11 @@ namespace yas {
 
 /***************************************************************************/
 
-YAS_DECLARE_EXCEPTION_TYPE(limits_exception);
+__YAS_DECLARE_EXCEPTION_TYPE(limits_exception);
 
 /***************************************************************************/
 
-#define YAS_THROW_LIMIT_EXCEEDED() \
+#define __YAS_THROW_LIMIT_EXCEEDED() \
     throw ::yas::limits_exception("limit exceeded");
 
 /***************************************************************************/

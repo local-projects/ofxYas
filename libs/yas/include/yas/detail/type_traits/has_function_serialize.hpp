@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -56,7 +56,7 @@ struct has_function_const_serialize<false, false, T, T2> {
 	typedef char (&no)  [2];
 
 	template<typename U, typename U2>
-	static yes check(decltype(serialize(*YAS_SCAST(U*, nullptr), *YAS_SCAST(const U2*, nullptr)))*);
+	static yes check(decltype(serialize(*__YAS_SCAST(U*, nullptr), *__YAS_SCAST(const U2*, nullptr)))*);
 
 	template<typename U, typename U2>
 	static no check(...);
@@ -77,7 +77,7 @@ struct has_function_serialize<false, false, T, T2> {
 	typedef char (&no)  [2];
 
 	template<typename U, typename U2>
-	static yes check(decltype(serialize(*YAS_SCAST(U*, nullptr), *YAS_SCAST(U2*, nullptr)))*);
+	static yes check(decltype(serialize(*__YAS_SCAST(U*, nullptr), *__YAS_SCAST(U2*, nullptr)))*);
 
 	template<typename U, typename U2>
 	static no check(...);

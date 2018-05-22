@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -33,8 +33,8 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-#ifndef __yas__tools__base_object_hpp
-#define __yas__tools__base_object_hpp
+#ifndef __yas__tool__base_object_hpp
+#define __yas__tool__base_object_hpp
 
 namespace yas {
 
@@ -50,4 +50,4 @@ const B& base_object(const D& d) {
 
 } // namespace yas
 
-#endif // __yas__tools__base_object_hpp
+#endif // __yas__tool__base_object_hpp

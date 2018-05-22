@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -87,7 +87,7 @@ private:
 	static yes deduce(...);
 
 public:
-	enum { value = sizeof(yes) == sizeof(deduce(YAS_SCAST(base*, nullptr))) };
+	enum { value = sizeof(yes) == sizeof(deduce(__YAS_SCAST(base*, nullptr))) };
 };
 
 /***************************************************************************/
@@ -131,7 +131,7 @@ private:
 	struct impl<true, R(Arg1)> {
 		enum {
 			value = sizeof(return_value_check<Object, R>::deduce((
-				(YAS_SCAST(derived_type*, nullptr))->serialize(*YAS_SCAST(Arg1*, nullptr)), detail::void_exp_result<Object>()
+				(__YAS_SCAST(derived_type*, nullptr))->serialize(*__YAS_SCAST(Arg1*, nullptr)), detail::void_exp_result<Object>()
 			))) == sizeof(yes)
 		};
 	};
@@ -162,7 +162,7 @@ private:
 	static yes deduce(...);
 
 public:
-	enum { value = sizeof(yes) == sizeof(deduce(YAS_SCAST(base*, nullptr))) };
+	enum { value = sizeof(yes) == sizeof(deduce(__YAS_SCAST(base*, nullptr))) };
 };
 
 /***************************************************************************/
@@ -206,7 +206,7 @@ private:
 	struct impl<true, R(Arg1)> {
 		enum {
 			value = sizeof(return_value_check<Object, R>::deduce((
-				(YAS_SCAST(const derived_type*, nullptr))->serialize(*YAS_SCAST(Arg1*, nullptr)), detail::void_exp_result<Object>()
+				(__YAS_SCAST(const derived_type*, nullptr))->serialize(*__YAS_SCAST(Arg1*, nullptr)), detail::void_exp_result<Object>()
 			))) == sizeof(yes)
 		};
 	};

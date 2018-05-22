@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -44,15 +44,16 @@ namespace const_sized_array {
 /***************************************************************************/
 
 template<std::size_t N, std::size_t F, typename Archive, typename T>
-Archive& save_chars(Archive &ar, const T *beg, const T *, YAS_ENABLE_IF_IS_ANY_OF(T, char, signed char)) {
+Archive& save_chars(Archive &ar, const T *beg, const T *, __YAS_ENABLE_IF_IS_ANY_OF(T, char, signed char)) {
     ar.write("\"", 1);
     ar.write(beg, N-1);
     ar.write("\"", 1);
 
     return ar;
 };
+
 template<std::size_t N, std::size_t F, typename Archive, typename T>
-Archive& save_chars(Archive &ar, const T *beg, const T *end, YAS_DISABLE_IF_IS_ANY_OF(T, char, signed char)) {
+Archive& save_chars(Archive &ar, const T *beg, const T *end, __YAS_DISABLE_IF_IS_ANY_OF(T, char, signed char)) {
     ar.write("[", 1);
 
     ar & (*beg);
@@ -87,24 +88,24 @@ Archive& save(Archive &ar, const T *beg, const T *end) {
 /***************************************************************************/
 
 template<std::size_t N, std::size_t F, typename Archive, typename T>
-Archive& load_chars(Archive &ar, T *beg, T *, YAS_ENABLE_IF_IS_ANY_OF(T, char, signed char)) {
-    YAS_THROW_IF_BAD_JSON_CHARS(ar, "\"");
+Archive& load_chars(Archive &ar, T *beg, T *, __YAS_ENABLE_IF_IS_ANY_OF(T, char, signed char)) {
+    __YAS_THROW_IF_BAD_JSON_CHARS(ar, "\"");
 
     ar.read(beg, N-1);
     *(beg+N) = 0;
 
-    YAS_THROW_IF_BAD_JSON_CHARS(ar, "\"");
+    __YAS_THROW_IF_BAD_JSON_CHARS(ar, "\"");
 
     return ar;
 }
 
 template<std::size_t N, std::size_t F, typename Archive, typename T>
-Archive& load_chars(Archive &ar, T *beg, T *end, YAS_DISABLE_IF_IS_ANY_OF(T, char, signed char)) {
+Archive& load_chars(Archive &ar, T *beg, T *end, __YAS_DISABLE_IF_IS_ANY_OF(T, char, signed char)) {
     __YAS_CONSTEXPR_IF ( !(F & yas::compacted) ) {
         json_skipws(ar);
     }
 
-    YAS_THROW_IF_BAD_JSON_CHARS(ar, "[");
+    __YAS_THROW_IF_BAD_JSON_CHARS(ar, "[");
 
     __YAS_CONSTEXPR_IF ( !(F & yas::compacted) ) {
         json_skipws(ar);
@@ -121,7 +122,7 @@ Archive& load_chars(Archive &ar, T *beg, T *end, YAS_DISABLE_IF_IS_ANY_OF(T, cha
             json_skipws(ar);
         }
 
-        YAS_THROW_IF_BAD_JSON_CHARS(ar, ",");
+        __YAS_THROW_IF_BAD_JSON_CHARS(ar, ",");
 
         __YAS_CONSTEXPR_IF ( !(F & yas::compacted) ) {
             json_skipws(ar);
@@ -134,7 +135,7 @@ Archive& load_chars(Archive &ar, T *beg, T *end, YAS_DISABLE_IF_IS_ANY_OF(T, cha
         json_skipws(ar);
     }
 
-    YAS_THROW_IF_BAD_JSON_CHARS(ar, "]");
+    __YAS_THROW_IF_BAD_JSON_CHARS(ar, "]");
 
     return ar;
 }
@@ -145,9 +146,7 @@ Archive& load(Archive &ar, T *beg, T *end) {
         return load_chars<N, F>(ar, beg, end);
     } else {
         const auto size = ar.read_seq_size();
-        if ( size != N ) {
-            YAS_THROW_BAD_ARRAY_SIZE();
-        }
+        if ( size != N ) { __YAS_THROW_BAD_ARRAY_SIZE(); }
         if ( can_be_processed_as_byte_array<F, T>::value ) {
             ar.read(beg, sizeof(T) * N);
         } else {

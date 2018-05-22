@@ -1,5 +1,5 @@
 
-// Copyright (c) 2010-2017 niXman (i dot nixman dog gmail dot com). All
+// Copyright (c) 2010-2018 niXman (i dot nixman dog gmail dot com). All
 // rights reserved.
 //
 // This file is part of YAS(https://github.com/niXman/yas) project.
@@ -38,7 +38,7 @@
 
 #include <yas/detail/type_traits/type_traits.hpp>
 #include <yas/detail/type_traits/serializer.hpp>
-#include <yas/detail/io/serialization_exception.hpp>
+#include <yas/detail/io/serialization_exceptions.hpp>
 #include <yas/detail/tools/cast.hpp>
 
 namespace yas {
@@ -55,7 +55,7 @@ struct serializer<
 > {
     template<typename Archive>
     static Archive& save(Archive& ar, const T& v) {
-        const auto u = YAS_SCAST(typename std::underlying_type<T>::type, v);
+        const auto u = __YAS_SCAST(typename std::underlying_type<T>::type, v);
         if ( can_be_processed_as_byte_array<F, T>::value ) {
             std::uint8_t buf[1+sizeof(T)] = {sizeof(T)};
             std::memcpy(&buf[1], &u, sizeof(u));
@@ -73,12 +73,12 @@ struct serializer<
         if ( can_be_processed_as_byte_array<F, T>::value ) {
             std::uint8_t size{};
             ar.read(&size, sizeof(size));
-            if ( sizeof(u) != size ) YAS_THROW_BAD_SIZE_OF_ENUM();
+            if ( sizeof(u) != size ) { __YAS_THROW_BAD_SIZE_OF_ENUM(); }
             ar.read(&u, sizeof(u));
         } else {
             ar & u;
         }
-        v = YAS_SCAST(T, u);
+        v = __YAS_SCAST(T, u);
 
         return ar;
     }
