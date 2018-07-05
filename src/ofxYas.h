@@ -58,7 +58,7 @@ namespace yas
         oa & obj;
         auto ptr = os.get_intrusive_buffer();
         b = ofBuffer(ptr.data, ptr.size);
-        return b;
+        //return b;
     }
 
     template<bool compact = false, typename T>
