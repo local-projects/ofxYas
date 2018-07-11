@@ -8,6 +8,10 @@
 #include <yas/mem_streams.hpp>
 #include <yas/binary_iarchive.hpp>
 #include <yas/binary_oarchive.hpp>
+#include <yas/json_oarchive.hpp>
+#include <yas/json_iarchive.hpp>
+#include <yas/text_oarchive.hpp>
+#include <yas/text_iarchive.hpp>
 #include <yas/std_types.hpp>
 
 namespace yas
@@ -69,7 +73,49 @@ namespace yas
         yas::binary_iarchive<yas::mem_istream, f> ia(is);
         ia & obj;
     }
-    
+
+	// main func
+	template<bool compact = false, typename T>
+	void serializeText(const T& obj, ofBuffer& b)
+	{
+		yas::mem_ostream os;
+		yas::text_oarchive<yas::mem_ostream, yas::text|yas::no_header> oa(os);
+		oa & obj;
+		auto ptr = os.get_intrusive_buffer();
+		b = ofBuffer(ptr.data, ptr.size);
+		//return b;
+	}
+	
+	template<bool compact = false, typename T>
+	void deserializeText(T& obj, const ofBuffer& b)
+	{
+		yas::mem_istream is(b.getData(), b.size());
+		yas::text_iarchive<yas::mem_istream, yas::text|yas::no_header> ia(is);
+		ia & obj;
+	}
+	
+	// main func
+	template<bool compact = false, typename T>
+	void serializeJSON(const T& obj, ofBuffer& b)
+	{
+		yas::mem_ostream os;
+		constexpr std::size_t json_opts = yas::json|yas::ehost|yas::compacted;
+		yas::json_oarchive<yas::mem_ostream, json_opts> oa(os);
+		oa & obj;
+		auto ptr = os.get_intrusive_buffer();
+		b = ofBuffer(ptr.data, ptr.size);
+		//return b;
+	}
+	
+	template<bool compact = false, typename T>
+	void deserializeJSON(T& obj, const ofBuffer& b)
+	{
+		yas::mem_istream is(b.getData(), b.size());
+		constexpr std::size_t json_opts = yas::json|yas::ehost|yas::compacted;
+		yas::json_iarchive<yas::mem_istream, json_opts> ia(is);
+		ia & obj;
+	}
+	
     template<typename T>
     void serializeCompacted(const T& obj, ofBuffer& b)
     {
